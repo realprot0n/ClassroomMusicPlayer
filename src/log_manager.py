@@ -44,7 +44,10 @@ def print_if_debug(
   return True
 
 def main() -> None:
-  print_if_debug(DebugLevel.ERRORS, "meow")
+  print_if_debug(DebugLevel.ERRORS, "An error, only printing if debug > errors")
+  print_if_debug(DebugLevel.WARNINGS, "A warning, only printing if debug > warnings")
+  print_if_debug(DebugLevel.INFO, "An informational, only printing if debug > info")
+  print_if_debug(DebugLevel.QUIET, "this shouldn't print")
 
 if __name__ == "__main__":
   main()
