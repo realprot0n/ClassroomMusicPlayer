@@ -1,6 +1,7 @@
 import json
-from video_info import VideoInfo
+import os
 from typing import Final, Any
+from video_info import VideoInfo
 from videoDownloading import download_folder, thumbnail_folder
 
 save_path: Final[str] = "video_storage/video_data.json"
@@ -9,21 +10,35 @@ default_storage_dict: dict[str, Any] = {
   "videos": []
 }
 
+def video_info_already_in_dict(video_id: str) -> bool:
+  for video_info in default_storage_dict["videos"]:
+    if video_info["video_id"] == video_id:
+      return True
+  return False
+
 def add_video_info(original_path: str, downloaded_info: dict) -> None:
-  print(downloaded_info["title"])
+  video_id: str = downloaded_info["id"]
+  if video_info_already_in_dict(video_id):
+    return
+  
   info: VideoInfo = VideoInfo(
     downloaded_info["title"],
-    original_path,
-    original_path
+    original_path + ".mp3",
+    original_path + ".webp",
+    video_id
   )
   default_storage_dict["videos"].append(info.turn_into_dict())
 
 def save_video_info(path: str = save_path) -> None:
-  with open(path, "r") as save:
+  open_code: str = "x"
+  if os.path.exists(path):
+    open_code = "w"
+  
+  with open(path, open_code) as save:
     json.dump(default_storage_dict, save, indent="  ")
 
 def load_video_info(path: str = save_path) -> None:
-  with open(path, "w") as save:
+  with open(path, "r") as save:
     default_storage_dict = json.load(save)
 
 def move_thumbnails_to(
