@@ -59,19 +59,22 @@ def save_info_hook(data: dict[str, str]) -> None:
     return
 
   file_name: str = data["filename"]
-  file_name = "".join(file_name.split(".")[:-2])
-  video_storage.add_video_info(
-    file_name + ".mp3",
-    json.loads(file_name + ".info.json")
-  )
-  print("-----------------------")
+  file_name = ".".join(file_name.split(".")[:-2])
+  with open(file_name + ".info.json", "r", encoding="utf8") as file:
+    video_storage.add_video_info(
+      file_name + ".mp3",
+      json.load(file)
+    )
 
 def main() -> None:
   ensure_folder_exists(download_folder)
   ensure_folder_exists(thumbnail_folder)
 
   downloader: yt_dlp.YoutubeDL = create_audio_downloader()
-  downloader.download(["https://www.youtube.com/watch?v=cSV4RJ3VBME", "https://www.youtube.com/watch?v=h6bb2I-8Pho"])
+  downloader.download(
+    ["https://www.youtube.com/watch?v=cSV4RJ3VBME",
+     "https://www.youtube.com/watch?v=h6bb2I-8Pho"]
+  )
 
 if __name__ == "__main__":
   main()
