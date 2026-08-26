@@ -16,18 +16,23 @@ def video_info_already_in_dict(video_id: str) -> bool:
       return True
   return False
 
-def add_video_info(original_path: str, downloaded_info: dict) -> None:
+def add_video_info(original_path: str, downloaded_info: dict, suggestor: str, anonymous: str | bool) -> bool:
   video_id: str = downloaded_info["id"]
   if video_info_already_in_dict(video_id):
-    return
+    return False
   
+  anonymous: bool = True if anonymous.lower() == "yes" else False
+
   info: VideoInfo = VideoInfo(
     downloaded_info["title"],
     original_path + ".mp3",
     original_path + ".webp",
-    video_id
+    video_id,
+    suggestor,
+    anonymous,
   )
   default_storage_dict["videos"].append(info.turn_into_dict())
+  return True
 
 def save_video_info(path: str = save_path) -> None:
   open_code: str = "x"

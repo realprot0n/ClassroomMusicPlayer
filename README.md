@@ -1,5 +1,10 @@
 # ClassroomMusicPlayer
-Three step process for letting students submit songs for a classroom- submission, downloading, and playback.
+Three step process for letting students submit songs for a classroom- submission, downloading, and playback. (quite unifinished right now but trust)
+
+## Benifits Over Other Options
+* No ads
+* No internet needed after downloads finish
+* No need to remember whomst submitted a video
 
 # Setup
 1. Clone this repository to your device.
@@ -13,6 +18,11 @@ Three step process for letting students submit songs for a classroom- submission
         5. Save the changes you made.
 4. Create a google form, with the same questions as [this example.](https://docs.google.com/forms/d/e/1FAIpQLSepe10z8sHp2lL1tmqGwM8B74-fqPeuWPgTwiIyHas1ccnp4g/viewform)
 5. Link the google form to google sheets.
+  * You can change other parameters of the google form if you want (e.g. only allow one submission per email), but the questions must stay the same.
+
+# How to Use
+1. Give the google form link to your students (or whoever you want to add links to the playlist)
+2. Place the .csv file in the `src` foler (TEMPORARY)
 
 # FAQ
 * "My school/admins won't let us have admin permission on our computers, so I can't set the ffmpeg executables in my compter's PATH"
