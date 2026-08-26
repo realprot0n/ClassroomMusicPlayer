@@ -8,6 +8,7 @@ from yt_dlp.postprocessor.ffmpeg import FFmpegExtractAudioPP
 
 download_folder: Final[str] = "video_storage"
 thumbnail_folder: Final[str] = "video_storage/thumbnails"
+ffmpeg_folder: Final[str] = "ffmpeg_binaries"
 
 def ensure_folder_exists(path: str) -> bool:
   """Makes sure the folder given at path exists.
@@ -39,6 +40,10 @@ def ensure_folder_exists(path: str) -> bool:
     )
   os.makedirs(path)
   return True
+
+def add_ffmpeg_folder_to_path(path: str = ffmpeg_folder) -> None:
+  ensure_folder_exists(path)
+  os.environ["PATH"] = os.path.abspath(path) + os.pathsep + os.environ["PATH"]
 
 def make_audio_options() -> yt_dlp._Params:
   return {
@@ -84,6 +89,7 @@ def end_downloading_hook() -> None:
 def download_videos(links: list[str]) -> None:
   ensure_folder_exists(download_folder)
   #ensure_folder_exists(thumbnail_folder)
+  add_ffmpeg_folder_to_path()
 
   downloader: yt_dlp.YoutubeDL = create_audio_downloader()
   downloader.download(links)
