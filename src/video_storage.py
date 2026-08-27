@@ -20,8 +20,9 @@ def add_video_info(original_path: str, downloaded_info: dict, suggestor: str, an
   video_id: str = downloaded_info["id"]
   if video_info_already_in_dict(video_id):
     return False
-  
-  anonymous: bool = True if anonymous.lower() == "yes" else False
+
+  if type(anonymous) == str:
+    anonymous = True if anonymous.lower() == "yes" else False
 
   info: VideoInfo = VideoInfo(
     downloaded_info["title"],
@@ -29,7 +30,7 @@ def add_video_info(original_path: str, downloaded_info: dict, suggestor: str, an
     original_path + ".webp",
     video_id,
     suggestor,
-    anonymous,
+    bool(anonymous),
   )
   default_storage_dict["videos"].append(info.turn_into_dict())
   return True
