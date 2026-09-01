@@ -111,11 +111,10 @@ def download_videos(links: list[str]) -> None:
   downloader.download(links)
   downloader.close()
 
-def get_videos_from_csv(path: str = "src\Video Link Submissions (Responses) - Form Responses 1.csv") -> dict[str, list[str]]:
-  reader: csv.reader
+def get_videos_from_csv(path: str = "src/Video Link Submissions (Responses) - Form Responses 1.csv") -> dict[str, list[str]]:
   with open(path, "r") as csv_file:
     reader = csv.reader(csv_file)
-  
+    
     return_values: dict[str, list[str]] = {
       "name": [],
       "anonymous": [],
@@ -126,7 +125,7 @@ def get_videos_from_csv(path: str = "src\Video Link Submissions (Responses) - Fo
       if first_line:
         first_line = False
         continue
-        
+      
       return_values["name"].append(line[1])
       return_values["anonymous"].append(line[2])
       return_values["link"].append(line[3])
@@ -140,7 +139,7 @@ def main() -> None:
     csv_values["link"]
   )
   ## IDEA FOR LATER
-  # prevent forum submissions from using playlist links (like the one above)
+  # prevent forum submissions from using playlist links
 
 if __name__ == "__main__":
   main()

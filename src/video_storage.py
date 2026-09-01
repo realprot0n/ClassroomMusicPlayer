@@ -44,6 +44,7 @@ def save_video_info(path: str = save_path) -> None:
     json.dump(default_storage_dict, save, indent="  ")
 
 def load_video_info(path: str = save_path) -> None:
+  global default_storage_dict
   with open(path, "r") as save:
     default_storage_dict = json.load(save)
 
