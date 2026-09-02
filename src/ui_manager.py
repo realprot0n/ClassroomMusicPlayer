@@ -1,10 +1,10 @@
 import video_storage
 import sound_player
 from video_info import VideoInfo
-from PySide6.QtCore import (QSize, QTimer, Qt)
+from PySide6.QtCore import (QSize, QTimer, Qt, QEvent)
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import \
-  (QApplication, QWidget, QPushButton, QMainWindow, QListWidgetItem, QListWidget, QLabel,  QListWidgetItem)
+  (QApplication, QWidget, QPushButton, QMainWindow, QListWidgetItem, QListWidget, QLabel, QListWidgetItem, QHBoxLayout)
 
 ui_app: QApplication 
 
@@ -16,14 +16,21 @@ class MainWindow(QMainWindow):
     
     self.setWindowTitle("Classroom Music Player")
     
-    self.video_list: VideoListSide = VideoListSide()
+    self.container_widget: QWidget = QWidget()
+    self.container_widget.setLayout(VideoPlayerContainer())
     
     self.setMinimumSize(self.minimum_size)
     
-    self.setCentralWidget(self.video_list)
-
+    self.setCentralWidget(self.container_widget)
+    
   def exec(self) -> None:
     pass
+
+class VideoPlayerContainer(QHBoxLayout):
+  def __init__(self):
+    super().__init__()
+    self.addWidget(VideoListSide())
+
 
 class VideoListSide(QListWidget):
   def __init__(self):
@@ -46,6 +53,7 @@ class VideoListSide(QListWidget):
     connected_widget: VideoListItem = self.itemWidget(item) # type: ignore
     video_info: VideoInfo = connected_widget.video_info
     song_path: str = video_info.video_path
+
     sound_player.start_playing(song_path)
 
 
@@ -56,11 +64,14 @@ class VideoListItem(QLabel):
   def __init__(self, video_info: VideoInfo) -> None:
     super().__init__()
     self.video_info = video_info
-    self.setText(video_info.title)
-    
-    #TODO: figure out how to add the thumbnails to the list items
-    self.side_image_label = QLabel(text="wa", pixmap=QPixmap(self.video_info.thumbnail_path))
-    self.side_image_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+  
+  def set_text(self, thumbnail_path: str, video_title: str, height: float) -> None:
+    image_margin: int = 2
+    self.setText(f"<img src=\"{thumbnail_path}\" height=\"{height-image_margin*2}\">  {video_title}")
+
+  def resizeEvent(self, event: QEvent) -> None:
+    self.set_text(self.video_info.thumbnail_path, self.video_info.title, event.size().height())
+
 
 def running_loop() -> None:
   song_position: int = sound_player.get_time_played()
