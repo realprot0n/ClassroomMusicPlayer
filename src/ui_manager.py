@@ -2,8 +2,9 @@ import video_storage
 import sound_player
 from video_info import VideoInfo
 from PySide6.QtCore import (QSize, QTimer)
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import \
-  (QApplication, QWidget, QPushButton, QMainWindow, QListWidgetItem, QListWidget,)# QLabel)
+  (QApplication, QWidget, QPushButton, QMainWindow, QListWidgetItem, QListWidget, QLabel,  QListWidgetItem)
 
 ui_app: QApplication 
 
@@ -16,11 +17,6 @@ class MainWindow(QMainWindow):
     self.setWindowTitle("Classroom Music Player")
     
     self.video_list: VideoListSide = VideoListSide()
-    video_storage.load_video_info()
-    for item in video_storage.default_storage_dict["videos"]:
-      info: VideoInfo = VideoInfo().info_from_dict(item)
-      list_item: VideoListItem = VideoListItem(info)
-      self.video_list.addItem(list_item)
     
     self.setMinimumSize(self.minimum_size)
     
@@ -30,34 +26,49 @@ class MainWindow(QMainWindow):
     pass
 
 class VideoListSide(QListWidget):
-  
   def __init__(self):
     super().__init__()
     self.itemClicked.connect(self.item_clicked)
 
-  def item_clicked(self, item: VideoListItem) -> None:
-    video_info: VideoInfo = item.video_info
+    video_storage.load_video_info()
+    for item in video_storage.default_storage_dict["videos"]:
+      info: VideoInfo = VideoInfo().info_from_dict(item)
+      self.add_item(info)
+  
+  def add_item(self, video_info: VideoInfo) -> None:
+    list_item: QListWidgetItem = QListWidgetItem(self)
+
+    custom_row: VideoListItem = VideoListItem(video_info)
+
+    self.setItemWidget(list_item, custom_row)
+
+  def item_clicked(self, item: QListWidgetItem) -> None:
+    connected_widget = self.itemWidget(item)
+    video_info: VideoInfo = connected_widget.video_info
     song_path: str = video_info.video_path
     sound_player.start_playing(song_path)
 
 
-class VideoListItem(QListWidgetItem):
+class VideoListItem(QLabel):
   video_info: VideoInfo
-  #side_image_label: QLabel
+  side_image_label: QLabel
   
   def __init__(self, video_info: VideoInfo) -> None:
     super().__init__()
     self.video_info = video_info
     self.setText(video_info.title)
     
-    # TODO: figure out how to add the thumbnails to the list items
-    #self.side_image_label = QLabel(text="wa", pixmap=QPixmap(self.video_info.thumbnail_path))
-    #self.side_image_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+    #TODO: figure out how to add the thumbnails to the list items
+    self.side_image_label = QLabel(text="wa", pixmap=QPixmap(self.video_info.thumbnail_path))
+    self.side_image_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
 def running_loop() -> None:
-  is_playing: bool = sound_player.pygame.mixer.get_busy()
-  playing_string: str = ("playing; " + str(sound_player.pygame.mixer.music.get_pos()) if is_playing else "not playing.")
+  song_position: int = sound_player.get_time_played()
+  is_playing: bool = sound_player.is_playing()
+  playing_string: str = ("playing; " + str(song_position) if (is_playing) else "not playing.")
+  
   print("timerlicious; music is " + playing_string)
+
   for event in sound_player.pygame.event.get():
     if event.type == sound_player.SONG_END:
       print("song end ded")

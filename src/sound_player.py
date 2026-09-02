@@ -10,6 +10,12 @@ pygame.mixer.init()
 SONG_END: Final[int] = pygame.USEREVENT + 1
 pygame.mixer.music.set_endevent(SONG_END)
 
+def get_time_played() -> int:
+  return pygame.mixer.music.get_pos()
+
+def is_playing() -> bool:
+  return pygame.mixer.music.get_busy()
+
 def start_playing(song_path: str, loop_count: int = 0, volume: float = 0.5) -> None:
   if not os.path.exists(song_path):
     raise FileNotFoundError(song_path)
@@ -19,13 +25,13 @@ def start_playing(song_path: str, loop_count: int = 0, volume: float = 0.5) -> N
   pygame.mixer.music.play(loops=loop_count)
 
 def pause_playback() -> None:
-  if not pygame.mixer.music.get_busy():
+  if not is_playing():
     return
   
   pygame.mixer.music.pause()
 
 def stop_playback() -> None:
-  if not pygame.mixer.music.get_busy():
+  if not is_playing():
     return
 
   pygame.mixer.music.stop()
