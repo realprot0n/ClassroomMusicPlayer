@@ -1,7 +1,9 @@
 import video_storage
 from video_info import VideoInfo
-from PySide6.QtCore import QSize
-from PySide6.QtWidgets import (QApplication, QWidget, QPushButton, QMainWindow, QListWidgetItem, QListWidget)
+from PySide6.QtCore import QSize#, Qt
+#from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import \
+  (QApplication, QWidget, QPushButton, QMainWindow, QListWidgetItem, QListWidget,)# QLabel)
 
 ui_app: QApplication 
 
@@ -31,12 +33,20 @@ class VideoListSide(QListWidget):
 
 class VideoListItem(QListWidgetItem):
   video_info: VideoInfo
+  #side_image_label: QLabel
+  
   def __init__(self, video_info: VideoInfo) -> None:
     super().__init__()
     self.video_info = video_info
     self.setText(video_info.title)
 
+    # TODO: figure out how to add the thumbnails to the list items
+    #self.side_image_label = QLabel(text="wa", pixmap=QPixmap(self.video_info.thumbnail_path))
+    #self.side_image_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+    
+
 def main() -> None:
+  global ui_app
   ui_app = QApplication([])
 
   window = MainWindow()
