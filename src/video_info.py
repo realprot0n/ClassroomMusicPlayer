@@ -1,7 +1,6 @@
 import json
 from typing import Self
 class VideoInfo:
-
   title: str
   video_path: str
   thumbnail_path: str

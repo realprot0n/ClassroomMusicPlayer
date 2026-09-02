@@ -1,7 +1,7 @@
 import video_storage
 import sound_player
 from video_info import VideoInfo
-from PySide6.QtCore import (QSize, QTimer)
+from PySide6.QtCore import (QSize, QTimer, Qt)
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import \
   (QApplication, QWidget, QPushButton, QMainWindow, QListWidgetItem, QListWidget, QLabel,  QListWidgetItem)
@@ -43,7 +43,7 @@ class VideoListSide(QListWidget):
     self.setItemWidget(list_item, custom_row)
 
   def item_clicked(self, item: QListWidgetItem) -> None:
-    connected_widget = self.itemWidget(item)
+    connected_widget: VideoListItem = self.itemWidget(item) # type: ignore
     video_info: VideoInfo = connected_widget.video_info
     song_path: str = video_info.video_path
     sound_player.start_playing(song_path)
