@@ -9,7 +9,7 @@ Three step process for letting students submit songs for a classroom- submission
 # Setup
 1. Clone this repository to your device.
 2. Download Python 3.14 (NOTE: developed on 3.14 testing needed to check for backwards compatability)
-3. Download yt-dlp & PySide6 using pip (run `py -m pip install yt-dlp`)
+3. Download yt-dlp, PySide6, and pygame using pip (run `py -m pip install yt-dlp`)
   * If you get any other errors mentioning missing libaries, also install those using pip.
 4. Download ffmpeg from the [ffmpeg website](https://ffmpeg.org/download.html) and extract its contents.
 5. Add ffmpeg to your computer's PATH variables
