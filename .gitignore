@@ -185,3 +185,4 @@ video_storage/
 ffmpeg_binaries/ffmpeg.exe
 ffmpeg_binaries/ffplay.exe
 ffmpeg_binaries/ffprobe.exe
+/.vscode
