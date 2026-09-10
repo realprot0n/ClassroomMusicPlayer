@@ -91,11 +91,13 @@ def save_info_hook(data: dict[str, str]) -> None:
     if video_storage.video_info_already_in_dict(video_id):
       return
 
+    index_capped: int = min(current_video_index, len(csv_values)-1)
+
     if video_storage.add_video_info(
       file_name,
       downloaded_info,
-      csv_values["name"][current_video_index],
-      csv_values["anonymous"][current_video_index]
+      csv_values["name"][index_capped],
+      csv_values["anonymous"][index_capped]
     ):
       current_video_index += 1
 
@@ -111,6 +113,36 @@ def download_videos(links: list[str]) -> None:
   downloader.download(links)
   downloader.close()
 
+
+# TODO: connect this to setting and clean up the function
+def get_playlist_videos(playlist_url):
+  ydl_opts: yt_dlp._Params = {
+    'extract_flat': 'in_playlist', # extract without downloading or resolving full video details
+    'quiet': True,
+    'no_warnings': True
+  }
+  
+  with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    try:
+      playlist_info = ydl.extract_info(playlist_url, download=False)
+      
+      if 'entries' in playlist_info:
+        video_list = []
+        for entry in playlist_info['entries']:
+          if entry: # Ensure entry is valid
+            video_list.append({
+              'title': entry.get('title'),
+              'id': entry.get('id'),
+              'url': entry.get('url') or f"https://www.youtube.com/watch?v={entry.get('id')}"
+            })
+        return video_list
+      else:
+        log_manager.print_if_debug(log_manager.DebugLevel.ERRORS, "The URL does not appear to be a playlist.")
+        return []
+    except Exception as e:
+      log_manager.print_if_debug(log_manager.DebugLevel.ERRORS, f"An error occurred: {e}")
+      return []
+
 def get_videos_from_csv(path: str = "src/Video Link Submissions (Responses) - Form Responses 1.csv") -> dict[str, list[str]]:
   with open(path, "r") as csv_file:
     reader = csv.reader(csv_file)
@@ -125,10 +157,21 @@ def get_videos_from_csv(path: str = "src/Video Link Submissions (Responses) - Fo
       if first_line:
         first_line = False
         continue
-      
-      return_values["name"].append(line[1])
-      return_values["anonymous"].append(line[2])
-      return_values["link"].append(line[3])
+
+      if not ("playlist" in line[3].lower()):
+        return_values["name"].append(line[1])
+        return_values["anonymous"].append(line[2])
+        return_values["link"].append(line[3])
+        continue
+
+      playlist_links: list[dict] = get_playlist_videos(line[3])
+      if playlist_links == []:
+        continue
+
+      for video_link in playlist_links:
+        return_values["name"].append(line[1])
+        return_values["anonymous"].append(line[2])
+        return_values["link"].append(video_link["url"])
   
   return return_values
 
