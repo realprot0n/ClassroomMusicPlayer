@@ -4,6 +4,7 @@ Three step process for letting students submit songs for a classroom- submission
 ## Benifits Over Other Options
 * No ads
 * No internet needed after downloads finish
+  * Can play videos blocked by school policy (if you download videos at home)
 * No need to remember whomst submitted a video
 
 # Setup
